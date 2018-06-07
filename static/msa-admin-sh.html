@@ -36,9 +36,10 @@
 	var shMethods = {}
 	shMethods.send = function() {
 		var input = this.Q('.input'), output = this.Q('.output')
-		var reqStr = "<div class='req'>> "+input.value+"</div>"
+		var cmd = input.value
+		var reqStr = "<div class='req'>> "+cmd+"</div>"
 		Msa.post("/admin/sh",
-			{body:{ cmd: input.value }},
+			{body:{ cmd:cmd }},
 			function(res) {
 				var stdoutStr = res.stdout ? "<xmp class='stdout'>"+res.stdout+"</xmp>" : ""
 				var stderrStr = res.stderr ? "<xmp class='stderr'>"+res.stderr+"</xmp>" : ""
@@ -46,23 +47,48 @@
 			}
 		)
 		input.value = ""
+		// fill cache
+		if(cmd !== this.cmdCache[0]) this.cmdCache.unshift(cmd)
+		this.cmdCacheIte = -1
 	}
 	shMethods.clear = function() {
 		this.Q('.output').innerHTML = ""
+	}
+	shMethods.getNextCmdFromCache = function() {
+		if(this.cmdCacheIte < this.cmdCache.length-1) {
+			this.cmdCacheIte += 1
+			this.Q('.input').value = this.cmdCache[this.cmdCacheIte]
+		}
+	}
+	shMethods.getPrevCmdFromCache = function() {
+		if(this.cmdCacheIte > 0) {
+			this.cmdCacheIte -= 1
+			this.Q('.input').value = this.cmdCache[this.cmdCacheIte]
+		}
 	}
 
 	// actions
 	var shActions = []
 	shActions.push({el:".send", evt:"click", act:function() {
 		this.send()
-	}});
+	}})
 	shActions.push({el:".clear", evt:"click", act:function() {
 		this.clear()
-	}});	shActions.push({el:".input", evt:"keydown", act:function(evt) {		if(evt.key==="ArrowUp")			console.log(evt)
-	}});	// register element
+	}})
+	shActions.push({el:".input", evt:"keydown", act:function(evt) {
+		// arrow up & down: cmd cache
+		if(evt.key==="ArrowUp") this.getNextCmdFromCache()
+		if(evt.key==="ArrowDown") this.getPrevCmdFromCache()
+		// enter: send
+		if(evt.key==="Enter") this.send()
+	}})
+
+	// register element
 	Msa.registerElement("msa-admin-sh", {
 		template:"#msa-admin-sh",
 		oncreate: function() {
+			this.cmdCache = []
+			this.cmdCacheIte = -1
 			this.Q = Msa.Q
 			Object.assign(this, shMethods)
 			Msa.addActions(this, shActions)
