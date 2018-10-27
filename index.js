@@ -7,17 +7,25 @@ msaAdmin.app.use(msaUser.mdw)
 
 const AdminPanels = []
 
-const DefaultPanel = {
-	perm: { group:"admin" }
+class AdminPanel {
+	constructor(kwargs){
+		for(let k of ["route", "app", "title"])
+			if(kwargs[k] === undefined)
+				throw `Missing arg "${k}"`
+		Object.assign(this, kwargs)
+	}
 }
+const AdminPanelPt = AdminPanel.prototype
+
+AdminPanelPt.perm = { group:"admin" }
 
 msaAdmin.register = function(kwargs) {
-	for(let k of ["route", "app", "title"])
-		if(kwargs[k] === undefined)
-			throw `Missing arg "${k}"`
-	const panel = Object.assign({}, DefaultPanel, kwargs)
+	const panel = new AdminPanel(kwargs)
 	AdminPanels.push(panel)
-	msaAdmin.app.use(panel.route, panel.app)
+	const mdw = Msa.express.Router()
+	msaAdmin.app.use(panel.route, mdw)
+	mdw.use(msaUser.checkUserPage(panel.perm))
+		.use(panel.app)
 }
 
 // register shell
@@ -30,16 +38,18 @@ msaAdmin.register({
 
 // root get
 msaAdmin.app.get('/', (req, res, next) => {
-	var html = "<ul>"
-	for(var p of AdminPanels){
-		if(msaUser.checkUser(req.session.user, p.perm)){
-			const href = joinUrl(req.baseUrl, p.route)
+	const authPanels = AdminPanels.filter(p => msaUser.checkUser(req.session.user, p.perm))
+	if(authPanels.length === 0)
+		res.sendPage(msaUser.unauthHtml)
+	else {
+		let html = "<ul>"
+		authPanels.forEach(p => {
+			const href = Msa.joinUrl(req.baseUrl, p.route)
 			html += `<li><a href="${href}">${p.title}</a></li>`
-		}
+		})
+		html += "</ul>"
+		res.sendPage(html)
 	}
-	html += "</ul>"
-	res.partial = Msa.formatHtml(html)
-	next()
 })
 
 // various
