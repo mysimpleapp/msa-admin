@@ -1,4 +1,4 @@
-const msaAdminSh = module.exports = Msa.module()
+const msaAdminSh = module.exports = new Msa.Module()
 
 const { exec } = require('child_process')
 

@@ -1,4 +1,4 @@
-const msaAdmin = module.exports = Msa.module("admin")
+const msaAdmin = module.exports = new Msa.Module("admin")
 
 const msaUser = Msa.require("user")
 msaAdmin.app.use(msaUser.mdw)
