@@ -1,7 +1,7 @@
 const msaAdmin = module.exports = new Msa.Module("admin")
 
-const msaUser = Msa.require("user")
-msaAdmin.app.use(msaUser.mdw)
+const { Perm, unauthHtml, mdw: userMdw } = Msa.require("user")
+msaAdmin.app.use(userMdw)
 
 // register ///////////
 
@@ -17,14 +17,14 @@ class AdminPanel {
 }
 const AdminPanelPt = AdminPanel.prototype
 
-AdminPanelPt.perm = { group:"admin" }
+AdminPanelPt.perm = new Perm({ group:"admin" })
 
 msaAdmin.register = function(kwargs) {
 	const panel = new AdminPanel(kwargs)
 	AdminPanels.push(panel)
 	const mdw = Msa.express.Router()
 	msaAdmin.app.use(panel.route, mdw)
-	mdw.use(msaUser.checkUserPage(panel.perm))
+	mdw.use(panel.perm.checkPage())
 		.use(panel.app)
 }
 
@@ -38,9 +38,9 @@ msaAdmin.register({
 
 // root get
 msaAdmin.app.get('/', (req, res, next) => {
-	const authPanels = AdminPanels.filter(p => msaUser.checkUser(req.session.user, p.perm))
+	const authPanels = AdminPanels.filter(p => p.perm.check(req.session.user))
 	if(authPanels.length === 0)
-		res.sendPage(msaUser.unauthHtml)
+		res.sendPage(unauthHtml)
 	else {
 		let html = "<ul>"
 		authPanels.forEach(p => {
@@ -54,4 +54,4 @@ msaAdmin.app.get('/', (req, res, next) => {
 
 // various
 
-const joinUrl = Msa.joinUrl
+const { joinUrl } = Msa
