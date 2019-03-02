@@ -1,4 +1,4 @@
-const msaAdmin = module.exports = new Msa.Module("admin")
+const msaAdmin = module.exports = new Msa.Module()
 
 const { Perm, unauthHtml, mdw: userMdw } = Msa.require("user")
 msaAdmin.app.use(userMdw)
