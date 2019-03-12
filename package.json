@@ -1,13 +1,13 @@
 {
-  "name": "msa-admin",
+  "name": "@mysimpleapp/msa-admin",
   "version": "0.1.0",
-  "description": "Admin MySimpleApp module",
+  "description": "MySimpleApp core module managing modules administration panels",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Nicolas CARREZ <nicolas.carrez@gmail.com>",
-  "license": "MIT",
+  "license": "ISC",
   "msaKey": "admin",
   "msaDependencies": {
     "user": "../msa-user"
