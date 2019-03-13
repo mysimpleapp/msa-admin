@@ -1,6 +1,6 @@
 {
   "name": "@mysimpleapp/msa-admin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MySimpleApp core module managing modules administration panels",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,6 @@
   "license": "ISC",
   "msaKey": "admin",
   "msaDependencies": {
-    "user": "../msa-user"
+    "user": "@mysimpleapp/msa-user"
   }
 }
