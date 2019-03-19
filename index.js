@@ -1,7 +1,6 @@
 const msaAdmin = module.exports = new Msa.Module()
 
-const { Perm, unauthHtml, mdw: userMdw } = Msa.require("user")
-msaAdmin.app.use(userMdw)
+const { Perm } = Msa.require("user/perm")
 
 // register ///////////
 
@@ -36,6 +35,13 @@ msaAdmin.register({
 	help: "Shell panel"
 })
 
+// admin app ////////////////////:
+
+const userMdw = Msa.require("user/mdw")
+const { unauthHtml } = Msa.require("user")
+
+msaAdmin.app.use(userMdw)
+
 // root get
 msaAdmin.app.get('/', (req, res, next) => {
 	const authPanels = AdminPanels.filter(p => p.perm.check(req.session.user))
@@ -52,6 +58,6 @@ msaAdmin.app.get('/', (req, res, next) => {
 	}
 })
 
-// various
+// utils
 
 const { joinUrl } = Msa
