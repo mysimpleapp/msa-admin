@@ -68,13 +68,12 @@ export class HTMLMsaAdminShElement extends HTMLElement {
 		var cmd = input.value
 		var reqStr = "<div class='req'>> "+cmd+"</div>"
 		ajax("POST", "/admin/sh",
-			{body:{ cmd:cmd }},
-			function(res) {
-				var stdoutStr = res.stdout ? "<xmp class='stdout'>"+res.stdout+"</xmp>" : ""
-				var stderrStr = res.stderr ? "<xmp class='stderr'>"+res.stderr+"</xmp>" : ""
-				output.innerHTML = reqStr + stdoutStr + stderrStr + output.innerHTML
-			}
-		)
+			{body:{ cmd:cmd }})
+		.then(res => {
+			var stdoutStr = res.stdout ? "<xmp class='stdout'>"+res.stdout+"</xmp>" : ""
+			var stderrStr = res.stderr ? "<xmp class='stderr'>"+res.stderr+"</xmp>" : ""
+			output.innerHTML = reqStr + stdoutStr + stderrStr + output.innerHTML
+		})
 		input.value = ""
 		// fill cache
 		if(cmd !== this.cmdCache[0]) this.cmdCache.unshift(cmd)
