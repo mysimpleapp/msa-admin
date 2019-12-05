@@ -1,4 +1,4 @@
-import { Q, importHtml, ajax } from "/msa/msa.js"
+import { Q, importHtml, ajax } from "/utils/msa-utils.js"
 
 importHtml(`<style>
 	msa-admin-sh input {
