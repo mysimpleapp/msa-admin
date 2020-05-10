@@ -11,6 +11,8 @@
   "msaKey": "admin",
   "msaDependencies": {
     "utils": "@mysimpleapp/msa-utils",
-    "user": "@mysimpleapp/msa-user"
+    "user": "@mysimpleapp/msa-user",
+    "db": "@mysimpleapp/msa-db",
+    "params": "@mysimpleapp/msa-params"
   }
 }
