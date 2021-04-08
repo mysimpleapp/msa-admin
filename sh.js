@@ -2,7 +2,7 @@ const msaAdminSh = module.exports = new Msa.Module()
 
 const { exec } = require('child_process')
 
-msaAdminSh.app.get('/', (req, res) => res.sendPage({ wel:'/admin/msa-admin-sh.js' }))
+msaAdminSh.app.get('/', (req, res) => res.sendPage({ wel:'/msa/admin/msa-admin-sh.js' }))
 
 msaAdminSh.app.post('/', (req, res, next) => {
   var cmd = req.body.cmd
